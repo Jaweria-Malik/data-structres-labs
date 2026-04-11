@@ -1,0 +1,143 @@
+#include <iostream>
+using namespace std;
+
+
+template <typename T>
+class AbstractStack {
+public:
+    virtual void push(T value) = 0;
+    virtual T pop() = 0;
+    virtual T top() const = 0;
+    virtual bool isEmpty() const = 0;
+    virtual bool isFull() const = 0;
+    virtual ~AbstractStack() {}
+};
+template <typename T>
+class myStack : public AbstractStack<T> {
+private:
+    T* arr;
+    T* minArr;
+    int topIndex;
+    int minTop;
+    int size;
+
+public:
+    myStack(int s) {
+        size = s;
+        arr = new T[size];
+        minArr = new T[size];
+        topIndex = -1;
+        minTop = -1;
+    }
+
+    void push(T value) {
+        if (isFull()) {
+            cout << "Stack Overflow";
+            return;
+        }
+        arr[++topIndex] = value;
+
+        if (minTop == -1 || value <= minArr[minTop]) {
+            minArr[++minTop] = value;
+        }
+    }
+
+    T pop() {
+        if (isEmpty()) {
+            cout << "Stack Underflow";
+            return -1;
+        }
+
+        T removed = arr[topIndex--];
+
+        if (removed == minArr[minTop]) {
+            minTop--;
+        }
+
+        return removed;
+    }
+
+    T top() const {
+        if (isEmpty()) {
+            cout << "Stack Empty\n";
+            return -1;
+        }
+        return arr[topIndex];
+    }
+    bool isEmpty() const {
+        return topIndex == -1;
+    }
+
+    bool isFull() const {
+        return topIndex == size - 1;
+    }
+
+    void display() const {
+        if (isEmpty()) {
+            cout << "Stack is empty";
+            return;
+        }
+
+        for (int i = topIndex; i >= 0; i--) {
+            cout << arr[i] << " ";
+        }
+        cout << endl;
+    }
+    T getMin() const {
+        if (minTop == -1) {
+            cout << "Stack Empty";
+            return -1;
+        }
+        return minArr[minTop];
+    }
+};
+int main() {
+    myStack<int> s(10);
+    int choice, value;
+
+    do {
+        cout << "\n1.Push element";
+        cout << "\n2.Pop element";
+        cout << "\n3.Show top element";
+        cout << "\n4.Check if stack is empty";
+        cout << "\n5.Check if stack is full";
+        cout << "\n6.Display stack";
+        cout << "\n7.Show minimum element";
+        cout << "\n8.Exit\n";
+
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            cin >> value;
+            s.push(value);
+            break;
+
+        case 2:
+            cout << s.pop() << endl;
+            break;
+
+        case 3:
+            cout << s.top() << endl;
+            break;
+        case 4:
+            cout << (s.isEmpty() ? "Empty\n" : "Not Empty\n");
+            break;
+
+        case 5:
+            cout << (s.isFull() ? "Full\n" : "Not Full\n");
+            break;
+
+        case 6:
+            s.display();
+            break;
+
+        case 7:
+            cout << s.getMin() << endl;
+            break;
+        }
+
+    } while (choice != 8);
+
+    return 0;
+}
